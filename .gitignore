@@ -1,0 +1,5 @@
+virtualenv/
+vk_config*.json
+.vscode
+settings.ini
+.idea
