@@ -22,8 +22,8 @@ def check_posts_vk():
         id = config.get('Settings', 'LAST_ID')
 
         # Сравниваем id, пропускаем уже опубликованные
-        #if int(post['id']) <= int(id):
-        #    continue
+        if int(post['id']) <= int(id):
+            continue
 
         # Текст
         text = post['text']
