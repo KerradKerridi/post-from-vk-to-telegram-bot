@@ -3,7 +3,7 @@ import sys
 import telebot
 import configparser
 from telebot.types import InputMediaPhoto
-
+from telebot import types
 
 # Считываем настройки
 config_path = os.path.join(sys.path[0], 'settings.ini')
@@ -12,6 +12,8 @@ config.read(config_path)
 BOT_TOKEN = config.get('Telegram', 'BOT_TOKEN')
 CHANNEL = config.get('Telegram', 'CHANNEL')
 PREVIEW_LINK = config.getboolean('Settings', 'PREVIEW_LINK')
+GROUP_FOR_POST = config.get('Settings', 'group_for_posts')
+IMPORTANT_LOGS = config.get('Settings', 'important_logs')
 
 # Инициализируем телеграмм бота
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -66,3 +68,18 @@ def post_images_with_text(img, text):
         pass
     return img_new
 
+def resend_in_group_for_post_text(text, type):
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    item1 = types.InlineKeyboardButton("Опубликовать", callback_data='post_post_post')
+    item2 = types.InlineKeyboardButton("Отклонить", callback_data='decline')
+    markup.add(item1, item2)
+    try:
+        bot.send_message(
+            # TODO: GROUP_FOR_POST
+            chat_id=GROUP_FOR_POST,
+            text=f'Пост из ТГ:\n{text}\n\nПост опубликован анонимно',
+            reply_markup=markup
+        )
+    except:
+        bot.send_message(IMPORTANT_LOGS,
+                         f'ALARM, Не удалось выгрузить пост\n\nИсточник: {type}\n')
