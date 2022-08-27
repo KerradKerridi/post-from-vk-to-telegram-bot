@@ -78,3 +78,5 @@ def something_function(response, type):
             config.write(config_file)
             
 
+if __name__ == '__main__':
+    check_posts_vk()
