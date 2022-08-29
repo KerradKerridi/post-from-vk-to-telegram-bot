@@ -12,6 +12,7 @@ def check_posts_vk():
     config.read(config_path)
     DOMAIN = config.get('VK', 'DOMAIN')
     COUNT = config.get('VK', 'COUNT')
+    COUNT_ID = config.getboolean('Settings', 'COUNT_ID')
     INCLUDE_LINK = config.getboolean('Settings', 'INCLUDE_LINK')
 
     response = connect_to_vk.get_data(DOMAIN, COUNT)
@@ -62,14 +63,18 @@ def check_posts_vk():
         if len(images) > 0:
             image_massive_without_text = list(map(lambda img: max(
                 img["sizes"], key=lambda size: size["type"])["url"], images))
-            image_massive_with_text = send_in_telegram.post_images_with_text(image_massive_without_text, text)
-
-            send_in_telegram.send_posts_in_tg(image_massive_with_text)
+            #image_massive_with_text, type = send_in_telegram.post_images_with_text(image_massive_without_text, text)
+            if len(image_massive_without_text) == 1:
+                print(f'массив на входе - {len(image_massive_without_text)}')
+                print(f'текст на входе - {text}')
+                send_in_telegram.send_posts_in_tg(image_massive_without_text[0], text)
+            else:
+                send.in_telegram.send_logs('Не получилось обработать пост, более одной фото')
         else:
             send_in_telegram.send_message_in_tg(text)
 
         #Записываем id в файл
-        #TODO: Раскоментировать, счетчик постов
-        config.set('Settings', 'LAST_ID', str(post['id']))
-        with open(config_path, "w") as config_file:
-            config.write(config_file)
+        if COUNT_ID:
+            config.set('Settings', 'LAST_ID', str(post['id']))
+            with open(config_path, "w") as config_file:
+                config.write(config_file)

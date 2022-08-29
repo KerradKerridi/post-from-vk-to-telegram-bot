@@ -14,7 +14,7 @@ last_id_for_bsk_lova = config.get('Settings', 'last_id_for_bsk_lova')
 last_id_for_see_you = config.get('Settings', 'last_id_for_see_you')
 COUNT = config.get('VK', 'COUNT')
 INCLUDE_LINK = config.getboolean('Settings', 'INCLUDE_LINK')
-
+COUNT_ID = config.getboolean('Settings', 'COUNT_ID')
 
 # Проверяем данные по условиям перед отправкой
 def check_posts_vk():
@@ -69,13 +69,13 @@ def something_function(response, type):
 
 
         #Записываем id в файл
-        #TODO: Раскоментировать, счетчик постов
-        if type == 'lova_bsk':
-            config.set('Settings', 'last_id_for_bsk_lova', str(post['id']))
-        else:
-            config.set('Settings', 'last_id_for_see_you', str(post['id']))
-        with open(config_path, "w") as config_file:
-            config.write(config_file)
+        if COUNT_ID:
+            if type == 'lova_bsk':
+                config.set('Settings', 'last_id_for_bsk_lova', str(post['id']))
+            else:
+                config.set('Settings', 'last_id_for_see_you', str(post['id']))
+            with open(config_path, "w") as config_file:
+                config.write(config_file)
             
 
 if __name__ == '__main__':

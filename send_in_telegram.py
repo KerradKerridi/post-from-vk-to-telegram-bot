@@ -18,26 +18,36 @@ IMPORTANT_LOGS = config.get('Settings', 'important_logs')
 # Инициализируем телеграмм бота
 bot = telebot.TeleBot(BOT_TOKEN)
 
-#Функция отправки поста с вложенными фото
-def send_posts_in_tg(img):
+#Функция отправки поста с вложенным фото
+def send_posts_in_tg(img, text):
     global bot
-    global CHANNEL
-    pass
-    bot.send_media_group(chat_id=CHANNEL, media=img)
+    global GROUP_FOR_POST
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    item1 = types.InlineKeyboardButton("Опубликовать", callback_data='post_post_post')
+    item2 = types.InlineKeyboardButton("Отклонить", callback_data='decline')
+    markup.add(item1, item2)
+    try:
+        bot.send_photo(chat_id=GROUP_FOR_POST, photo=img, reply_markup=markup, caption=text)
+    except:
+        bot.send_message(chat_id=IMPORTANT_LOGS, text='Не удалось вытащить пост с вк')
 
 
 #Отправка только текстовых постов
 def send_message_in_tg(text):
     global bot
-    global CHANNEL
+    global GROUP_FOR_POST
     global PREVIEW_LINK
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    item1 = types.InlineKeyboardButton("Опубликовать", callback_data='post_post_post')
+    item2 = types.InlineKeyboardButton("Отклонить", callback_data='decline')
+    markup.add(item1, item2)
     # функция отправки текста
     if len(text) > 4096:
         # В телеграмме есть ограничения на длину одного сообщения в 4091 символ, разбиваем длинные сообщения на части
         for msg in split(text):
-            bot.send_message(CHANNEL, msg, disable_web_page_preview=not PREVIEW_LINK, parse_mode='MarkdownV2')
+            bot.send_message(GROUP_FOR_POST, msg, disable_web_page_preview=not PREVIEW_LINK, parse_mode='MarkdownV2', reply_markup=markup)
     else:
-        bot.send_message(CHANNEL, text, disable_web_page_preview=not PREVIEW_LINK)
+        bot.send_message(GROUP_FOR_POST, text, disable_web_page_preview=not PREVIEW_LINK, reply_markup=markup)
 
 def split(text):
     message_breakers = [':', ' ', '\n']
@@ -54,19 +64,22 @@ def split(text):
 
 
 #Преобразование фото к объектам MediaPhoto. Ограничение по тексту прикрепляемому к фото 1024 символа.
-def post_images_with_text(img, text):
-    img_new = []
-    if len(img) == 1 and len(text) < 1024:
-        img_new = [InputMediaPhoto(img[0], caption=text)]
-    elif len(img) > 1 and len(text) < 1024:
-        for i in range(1, len(img)):
-            if i + 1 < len(img):
-                img_new.append(InputMediaPhoto(img[i]))
-            else:
-                img_new.append(InputMediaPhoto(img[i], caption=text))
-    else:
-        pass
-    return img_new
+# def post_images_with_text(img, text):
+#     img_new = []
+#     type = ''
+#     if len(img) == 1 and len(text) < 1024:
+#         type = 'photo'
+#         img_new = [InputMediaPhoto(img[0], caption=text)]
+#     elif len(img) > 1 and len(text) < 1024:
+#         type = 'media_group'
+#         for i in range(1, len(img)):
+#             if i + 1 < len(img):
+#                 img_new.append(InputMediaPhoto(img[i]))
+#             else:
+#                 img_new.append(InputMediaPhoto(img[i], caption=text))
+#     else:
+#         pass
+#     return img_new, type
 
 def resend_in_group_for_post_text(text, type):
     markup = types.InlineKeyboardMarkup(row_width=1)
@@ -83,3 +96,11 @@ def resend_in_group_for_post_text(text, type):
     except:
         bot.send_message(IMPORTANT_LOGS,
                          f'ALARM, Не удалось выгрузить пост\n\nИсточник: {type}\n')
+
+def send_logs(text):
+    global bot
+    global IMPORTANT_LOGS
+    global PREVIEW_LINK
+    # функция отправки текста
+    bot.send_message(IMPORTANT_LOGS, text, disable_web_page_preview=not PREVIEW_LINK, reply_markup=markup)
+        
