@@ -65,8 +65,6 @@ def check_posts_vk():
                 img["sizes"], key=lambda size: size["type"])["url"], images))
             #image_massive_with_text, type = send_in_telegram.post_images_with_text(image_massive_without_text, text)
             if len(image_massive_without_text) == 1:
-                print(f'массив на входе - {len(image_massive_without_text)}')
-                print(f'текст на входе - {text}')
                 send_in_telegram.send_posts_in_tg(image_massive_without_text[0], text)
             else:
                 send.in_telegram.send_logs('Не получилось обработать пост, более одной фото')
