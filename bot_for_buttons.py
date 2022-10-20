@@ -8,10 +8,8 @@ config_path = os.path.join(sys.path[0], 'settings.ini')
 config = configparser.ConfigParser()
 config.read(config_path)
 GROUP_FOR_POST = config.get('Settings', 'group_for_posts')
-KILL_CHANEL = config.get('Telegram', 'kill_channel')
 BOT_TOKEN = config.get('Telegram', 'BOT_TOKEN')
 IMPORTANT_LOGS = config.get('Settings', 'important_logs')
-GROUP_FOR_LOGS = config.get('Settings', 'group_for_logs')
 CHANNEL = config.get('Telegram', 'CHANNEL')
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -26,7 +24,7 @@ def telegram_bot():
                 bot.send_message(chat_id=CHANNEL, text=call.message.text)
                 bot.delete_message(chat_id=GROUP_FOR_POST, message_id=call.message.message_id)
             except:
-                bot.send_message(chat_id=GROUP_FOR_LOGS, text='Не удалось выложить/удалить текстовый пост, что-то пошло не так')
+                bot.send_message(chat_id=IMPORTANT_LOGS, text='Не удалось выложить/удалить текстовый пост, что-то пошло не так')
         elif call.data == 'post_post_post' and call.message.content_type == 'photo':
             try:
                 bot.send_photo(
@@ -36,12 +34,12 @@ def telegram_bot():
                 )
                 bot.delete_message(chat_id=GROUP_FOR_POST, message_id=call.message.message_id)
             except:
-                bot.send_message(chat_id=GROUP_FOR_LOGS, text='Не удалось выложить/удалить пост с фотографией, что-то пошло не так')
+                bot.send_message(chat_id=IMPORTANT_LOGS, text='Не удалось выложить/удалить пост с фотографией, что-то пошло не так')
         elif call.data == 'decline':
             try:
                 bot.delete_message(chat_id=GROUP_FOR_POST, message_id=call.message.message_id)
             except:
-                bot.send_message(chat_id=GROUP_FOR_LOGS, text='Не удалось отклонить пост')
+                bot.send_message(chat_id=IMPORTANT_LOGS, text='Не удалось отклонить пост')
 
 if __name__ == '__main__':
     telegram_bot()
