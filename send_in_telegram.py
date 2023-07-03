@@ -62,25 +62,6 @@ def split(text):
     else:
         return [text]
 
-
-#Преобразование фото к объектам MediaPhoto. Ограничение по тексту прикрепляемому к фото 1024 символа.
-# def post_images_with_text(img, text):
-#     img_new = []
-#     type = ''
-#     if len(img) == 1 and len(text) < 1024:
-#         type = 'photo'
-#         img_new = [InputMediaPhoto(img[0], caption=text)]
-#     elif len(img) > 1 and len(text) < 1024:
-#         type = 'media_group'
-#         for i in range(1, len(img)):
-#             if i + 1 < len(img):
-#                 img_new.append(InputMediaPhoto(img[i]))
-#             else:
-#                 img_new.append(InputMediaPhoto(img[i], caption=text))
-#     else:
-#         pass
-#     return img_new, type
-
 def resend_in_group_for_post_text(text, type):
     markup = types.InlineKeyboardMarkup(row_width=1)
     item1 = types.InlineKeyboardButton("Опубликовать", callback_data='post_post_post')
